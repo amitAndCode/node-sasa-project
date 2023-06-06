@@ -1,14 +1,15 @@
 const {
   getAllLaunches,
-  addLaunch,
+  addNewLaunch,
   abortLaunch,
 } = require("../../models/launches.model");
 
-const httpGetAllLaunches = (req, res) => {
-  res.status(200).json(getAllLaunches());
+const httpGetAllLaunches = async (req, res) => {
+  const launchesData = await getAllLaunches();
+  res.status(200).json(launchesData);
 };
 
-const httpAddLaunch = (req, res) => {
+const httpAddLaunch = async (req, res) => {
   const launch = req.body;
   if (
     !launch.mission ||
@@ -28,18 +29,18 @@ const httpAddLaunch = (req, res) => {
     });
   }
   launch.launchDate = launchDate;
-  const result = addLaunch(launch);
+  const result = await addNewLaunch(launch);
   return res.status(201).json(result);
 };
 
-const httpAbortLaunch = (req, res) => {
+const httpAbortLaunch = async (req, res) => {
   const flightNumber = parseInt(req.params.id);
-  const launch = abortLaunch(flightNumber);
-  if (launch) {
-    return res.status(200).json(launch);
+  const aborted = await abortLaunch(flightNumber);
+  if (aborted) {
+    return res.status(200).json({ ok: true });
   } else {
     res.status(404).json({
-      error: "Mission not found",
+      error: "launch not aborted",
     });
   }
 };
