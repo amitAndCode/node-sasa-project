@@ -5,7 +5,9 @@ const {
 } = require("../../models/launches.model");
 
 const httpGetAllLaunches = async (req, res) => {
-  const launchesData = await getAllLaunches();
+  const { query } = req;
+  console.log(req.query);
+  const launchesData = await getAllLaunches(query);
   res.status(200).json(launchesData);
 };
 

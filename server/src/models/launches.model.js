@@ -1,6 +1,7 @@
 const axios = require("axios");
 const launchesDatabase = require("./launches.mongo");
 const planets = require("./planets.mongo");
+const { getPagination } = require("./helper");
 
 const launches = new Map();
 
@@ -19,8 +20,13 @@ const launch1 = {
   customer: ["Tesla", "Microsoft"],
 };
 
-async function getAllLaunches() {
-  return await launchesDatabase.find({}, { __v: 0, __id: 0 });
+async function getAllLaunches(query) {
+  const { skip, limit } = getPagination(query);
+  return await launchesDatabase
+    .find({}, { __v: 0, __id: 0 })
+    .sort({ flightNumber: 1 })
+    .skip(skip)
+    .limit(limit);
 }
 
 async function getLatestFlightNumber() {
